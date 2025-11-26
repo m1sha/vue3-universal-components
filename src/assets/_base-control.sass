@@ -1,0 +1,17 @@
+@use '_colors' as colors
+
+@mixin flex-container()
+  display: flex
+  flex-direction: column
+  gap: 2px
+  width: 100%
+
+@mixin picker-btn()
+  button
+    background-color: transparent
+    border: 1px solid var(--panel-border)
+    border-left: 0
+    border-top-left-radius: 0
+    border-bottom-left-radius: 0
+    border-radius: 0
+    padding: 4px
