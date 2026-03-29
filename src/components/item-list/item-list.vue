@@ -1,11 +1,12 @@
 <script setup lang="ts" generic="T extends { id: string, name: string, icon?: string }">
 import { ref } from 'vue';
 import { type TDropMenu, DropMenu } from '../drop-menu'
+import { removeItem } from '../../utils/array';
 
-defineProps<{ items: T[], menu?: TDropMenu }>()
-const model = defineModel<string | null>()
+const { multiselect, deselectOnNextClick } =  defineProps<{ items: T[], menu?: TDropMenu, multiselect?: boolean, deselectOnNextClick?: boolean }>()
+const model = defineModel<string | string[] | null>()
 const emit = defineEmits<{
-  click: [item: T],
+  click: [item: T, selected: boolean],
   'menu-click': [itemId: string, menuItemName: string]
 }>()
 
@@ -15,13 +16,57 @@ const onMenuClick = (itemId: string, menuItemName: string) => {
   emit('menu-click', itemId, menuItemName)
   showMenuIndex.value = -1
 }
+
+const onClick = (item: T, ev: MouseEvent) => {
+  if (Array.isArray(model.value)){
+    if (multiselect) {
+      if (ev.ctrlKey) {
+        if (deselectOnNextClick && removeItem(model.value, p => p === item.id)) {
+          emit('click', item, false)
+          return
+        }
+        
+        model.value.push(item.id)
+        emit('click', item, true)
+        return
+      }
+
+      if (deselectOnNextClick && removeItem(model.value, p => p === item.id)) {
+        emit('click', item, false)
+        return
+      }
+
+      model.value = [item.id]
+      emit('click', item, true)
+      return
+    }
+  }
+
+  if (deselectOnNextClick &&  model.value === item.id) {
+    model.value = null
+    emit('click', item, false)
+    return
+  }
+
+  model.value = item.id
+  emit('click', item, true)
+}
+
+const isSelected = (item: T) => {
+  if (Array.isArray(model.value)) {
+    return model.value.includes(item.id)
+  }
+
+  return model.value === item.id
+}
+
 </script>
 
 <template>
 <ul class="list">
   <li v-for="item, index in items" :key="item.id">
-    <div class="list-item" :class="{ selected: item.id === model }">
-      <div class="list-item-title" @click="model = item.id;emit('click', item)">
+    <div class="list-item" :class="{ selected: isSelected(item) }">
+      <div class="list-item-title" @click="onClick(item, $event);">
         <slot name="list-item-title" :item="item">
           <i v-if="item.icon" :class="'fa fa-' + item.icon"></i>
           <span>{{ item.name }}</span>

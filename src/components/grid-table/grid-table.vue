@@ -1,20 +1,22 @@
 <script setup lang="ts" generic="T extends { id: string }">
 defineProps<{
-  headers: string[],
+  headers?: string[],
+  columnCount?: number,
+  noHeaders?: boolean,
   rows: T[]
 }>()
 </script>
 
 <template>
-<div class="grid-table" :style="{ gridTemplateColumns: `repeat(${headers.length}, 1fr)`}">
-  <div class="grid-table-header" v-for="header, columnIndex in headers">
+<div class="grid-table" :style="{ gridTemplateColumns: `repeat(${headers?.length ?? columnCount ?? 0}, 1fr)`}">
+  <div v-if="noHeaders !== true" class="grid-table-header" v-for="header, columnIndex in headers">
     <slot :header :columnIndex>
       {{ header }}
     </slot>
   </div>
 
   <template v-for="row, rowIndex in rows">
-    <div class="grid-table-cell" v-for="header, columnIndex in headers">
+    <div class="grid-table-cell" v-for="header, columnIndex in headers ?? columnCount">
       <slot name="row" :row :header :rowIndex :columnIndex></slot>
     </div>
   </template>

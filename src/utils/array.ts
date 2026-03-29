@@ -1,7 +1,7 @@
-export function removeItem<T> (items: T[], predicate: ((item: T, index: number) => boolean) | number): void {
+export function removeItem<T> (items: T[], predicate: ((item: T, index: number) => boolean) | number): boolean {
   if (typeof predicate === 'number') {
     items.splice(predicate, 1)
-    return
+    return true
   }
 
   let index = -1
@@ -13,4 +13,5 @@ export function removeItem<T> (items: T[], predicate: ((item: T, index: number) 
     }
   }
   if (index >= 0) items.splice(index, 1)
+  return index > -1
 }

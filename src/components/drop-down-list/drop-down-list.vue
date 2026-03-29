@@ -45,7 +45,7 @@ onUnmounted (() => list.dispose())
     <div class="dropdown-list-wrapper" :style="{ display: list.isOpen ? 'block': 'none' }">
       <div class="abs">
         <div class="dropdown-list">
-          <div class="dropdown-list-item" v-for="item in items" :key="item.id" @click="list.select(item.id)">
+          <div class="dropdown-list-item" :class="{ selected: item.id === model }" v-for="item in items" :key="item.id" @click="list.select(item.id)">
             <div class="image-block" v-if="item.image" >
               <img :src="'data:image/png;base64,' + item.image" height="18" width="auto" />
             </div>
@@ -110,6 +110,9 @@ onUnmounted (() => list.dispose())
         border-bottom: 1px dashed color-mix(in srgb, var(--panel-border), #2f2f2f)
         display: flex
         gap: 8px
+        font-size: .8em
+        &.selected
+          background-color: color-mix(in srgb, var(--data-accident-color), #3f3f3f)
         &:hover
           background-color: color-mix(in srgb, var(--panel-color), #2f2f2f)
         .image-block
