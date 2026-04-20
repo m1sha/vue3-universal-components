@@ -6,7 +6,7 @@ defineProps<{
 </script>
 
 <template>
-  <button class="vue3-uui__push-button" :class="{ size }">
+  <button class="vue3-uui__push-button push-button" :class="{ size }">
     <slot></slot>
   </button>
 </template>
