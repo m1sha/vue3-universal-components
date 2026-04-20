@@ -1,3 +1,3 @@
-import DropDownList from './drop-down-list.vue'
+import DropDownList, { type DropDownListProps } from './drop-down-list.vue'
 
-export { DropDownList }
+export { DropDownList, type DropDownListProps }
