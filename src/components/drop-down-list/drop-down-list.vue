@@ -1,22 +1,35 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import type { DroplistOption } from './option'
 import { DropDownList } from './drop-down-list'
 import { type LabelProps } from '../label-props'
 import { uuidv4 } from '../../utils/uuidv4'
 
-const model = defineModel<string>()
-const props = defineProps<{
+export type DropDownListProps = {
   items: DroplistOption[]
-} & LabelProps>()
+} & LabelProps
 
+const model = defineModel<string>()
+const props = defineProps<DropDownListProps>()
 const list = reactive(new DropDownList(props, model))
-
-
-
+const elements = ref<Element[]>([])
 const controlId = ref('ddl_' + uuidv4())
 
-onMounted(() => list.init())
+list.onOpen = async () => {
+await nextTick()
+  elements.value.forEach((el, i) => {
+    if (!el.classList.contains('selected')) return
+    const e = el as HTMLDivElement
+    e.scrollIntoView({
+      behavior: 'instant',
+      block: 'start'
+    })
+  })
+}
+
+onMounted(() => {
+  list.init()
+})
 onUnmounted (() => list.dispose())
 
 </script>
@@ -45,7 +58,7 @@ onUnmounted (() => list.dispose())
     <div class="dropdown-list-wrapper" :style="{ display: list.isOpen ? 'block': 'none' }">
       <div class="abs">
         <div class="dropdown-list">
-          <div class="dropdown-list-item" :class="{ selected: item.id === model }" v-for="item in items" :key="item.id" @click="list.select(item.id)">
+          <div class="dropdown-list-item" :ref="el => {if (el) elements.push(el as Element) }" :class="{ selected: item.id === model }" v-for="item in items" :key="item.id" @click="list.select(item.id)">
             <div class="image-block" v-if="item.image" >
               <img :src="'data:image/png;base64,' + item.image" height="18" width="auto" />
             </div>

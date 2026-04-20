@@ -5,6 +5,8 @@ import { computed } from "vue"
 export class DropDownList {
   private closeDelegate?: () => void
   isOpen: boolean = false
+
+  onOpen: (() => void) | null = null
   
   constructor (private source: { items: DroplistOption[] }, private model: { value: any }) {}
 
@@ -30,6 +32,7 @@ export class DropDownList {
     if (this.isOpen) this.close()
     else
     this.open()
+    this.onOpen?.()
   }
 
   init () {
