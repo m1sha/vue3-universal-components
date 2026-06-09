@@ -17,5 +17,6 @@ export * from './tracker'
 export * from './trash-label'
 export * from './upload-button'
 export * from './upload-file'
+export * from './radio-group'
 
 
